@@ -18,8 +18,7 @@ public class MapController : MonoBehaviour
     public class RegionInfo
     {
         public string mapName; // 지역 이름
-        public Vector2 minPosition; // 지역 내의 최소 위치
-        public Vector2 maxPosition; // 지역 내의 최대 위치
+        public BoxCollider2D regionCollider; // 지역을 나타내는 박스 콜라이더
         public GameObject miniMap; // 해당 지역의 미니맵
         // 추가적인 지역 정보를 원하는대로 정의할 수 있음
     }
@@ -43,7 +42,7 @@ public class MapController : MonoBehaviour
         {
             // 플레이어의 위치를 게임 맵의 좌표로 변환
             Vector2 mapPosition = new Vector2(
-               Mathf.Clamp(player.position.x, -mapSize.x / 2f, mapSize.x / 2f), // x 좌표 제한
+                Mathf.Clamp(player.position.x, -mapSize.x / 2f, mapSize.x / 2f), // x 좌표 제한
                 Mathf.Clamp(player.position.y, -mapSize.y / 2f, mapSize.y / 2f) // y 좌표 제한
             );
 
@@ -76,11 +75,8 @@ public class MapController : MonoBehaviour
         // 플레이어가 어떤 지역에 속해 있는지 확인
         foreach (RegionInfo region in regions)
         {
-            // 플레이어의 위치가 지역 내에 있는지 확인
-            if (player.position.x >= region.minPosition.x &&
-                player.position.x <= region.maxPosition.x &&
-                player.position.y >= region.minPosition.y &&
-                player.position.y <= region.maxPosition.y)
+            // 플레이어의 위치가 지역 내에 있는지 박스 콜라이더를 사용하여 확인
+            if (region.regionCollider != null && region.regionCollider.bounds.Contains(player.position))
             {
                 // 플레이어가 다른 지역으로 이동한 경우에만 지도 이름 및 미니맵을 업데이트
                 if (currentMapName != region.mapName)
